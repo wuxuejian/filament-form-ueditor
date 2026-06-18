@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Wxj\FilamentFormUeditor\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class FilamentFormUeditorCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'filament-form-ueditor';
 
     public $description = 'My command';
 
