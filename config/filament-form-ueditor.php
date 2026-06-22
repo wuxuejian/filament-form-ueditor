@@ -17,6 +17,9 @@ return [
                 'insertimage', 'link', 'unlink',
             ],
         ],
+        'shortcutMenuShows' => [
+            'ai' => false
+        ]
     ],
 
     //是否保存时入库

@@ -30,7 +30,7 @@
                 <script type="text/plain"
                     id="ueditor-{{ $editorId }}"
                     name="{{ $name }}"
-                    x-model="state"
+                    x-model="state" style="z-index: 1"
                 ></script>
             </div>
         </div>

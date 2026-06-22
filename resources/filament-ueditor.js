@@ -36,7 +36,7 @@ document.addEventListener('alpine:init', () => {
             this.$nextTick(() => {
                 this.editor = FilamentUeditor.create(
                     config.editorId,
-                    config.options??{},
+                    config.options
                     // {
                     //     serverUrl: config.uploadUrl,
                     //     autoHeightEnabled: config.autoHeightEnabled,
