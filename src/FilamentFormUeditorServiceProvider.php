@@ -27,7 +27,7 @@ class FilamentFormUeditorServiceProvider extends PackageServiceProvider
             ->name('filament-form-ueditor')
             ->hasConfigFile()
             ->hasViews()
-//            ->hasAssets()
+            ->hasAssets()
 //            ->hasMigration('create_filament_form_ueditor_table')
 //            ->hasCommand(FilamentFormUeditorCommand::class)
         ;
@@ -74,5 +74,20 @@ class FilamentFormUeditorServiceProvider extends PackageServiceProvider
                     public_path('js/wuxuejian/filament-form-ueditor'),
             ], 'filament-ueditor-assets');
         }
+        $this->bootUeditorAssets();
+    }
+
+    protected function bootUeditorAssets(): static
+    {
+        if (! $this->app->runningInConsole()) {
+            return $this;
+        }
+
+        $vendorAssets = $this->package->basePath('/../resources/dist');
+        $appAssets = public_path("js/wuxuejian/{$this->package->shortName()}");
+
+        $this->publishes([$vendorAssets => $appAssets], "{$this->package->shortName()}-assets");
+
+        return $this;
     }
 }
