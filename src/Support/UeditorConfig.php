@@ -3,8 +3,8 @@
 namespace Wxj\FilamentFormUeditor\Support;
 
 /**
- *
  *  动态配置项 IDE 提示（你可以随时添加）
+ *
  * @method $this initialFrameWidth(string $value)
  * @method $this initialFrameHeight(int $value)
  * @method $this autoHeightEnabled(bool $value)
@@ -19,30 +19,30 @@ class UeditorConfig
      * 所有配置项存储在这里
      */
     protected array $config = [
-        'initialFrameWidth'  => '100%',
+        'initialFrameWidth' => '100%',
         'initialFrameHeight' => 400,
-        'autoHeightEnabled'  => false,
-        'toolbars'           => [],
-        'serverUrl'         => '/admin/ueditor',
+        'autoHeightEnabled' => false,
+        'toolbars' => [],
+        'serverUrl' => '/admin/ueditor',
     ];
 
     public $defaultShortcutMenu = [
-        "ai",           // AI智能
+        'ai',           // AI智能
         // "fontfamily",   // 字体
         // "fontsize",     // 字号
-        "bold",            // 加粗
-        "italic",          // 斜体
-        "underline",       // 下划线
-        "strikethrough",   // 删除线
-        "fontborder",      // 字符边框
-        "forecolor",       // 字体颜色
-        "backcolor",       // 背景色
-        "imagenone",       // 图片默认
-        "imageleft",       // 图片左浮动
-        "imagecenter",     // 图片居中
-        "imageright",      // 图片右浮动
-        "insertimage",     // 插入图片
-        "formula",
+        'bold',            // 加粗
+        'italic',          // 斜体
+        'underline',       // 下划线
+        'strikethrough',   // 删除线
+        'fontborder',      // 字符边框
+        'forecolor',       // 字体颜色
+        'backcolor',       // 背景色
+        'imagenone',       // 图片默认
+        'imageleft',       // 图片左浮动
+        'imagecenter',     // 图片居中
+        'imageright',      // 图片右浮动
+        'insertimage',     // 插入图片
+        'formula',
         // "justifyleft",    // 居左对齐
         // "justifycenter",  // 居中对齐
         // "justifyright",   // 居右对齐
@@ -70,10 +70,8 @@ class UeditorConfig
 
     public static function make(): static
     {
-        return new static();
+        return new static;
     }
-
-
 
     public function set(string $key, mixed $value): static
     {

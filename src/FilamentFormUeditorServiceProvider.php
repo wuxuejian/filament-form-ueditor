@@ -2,17 +2,13 @@
 
 namespace Wxj\FilamentFormUeditor;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Wxj\FilamentFormUeditor\Commands\FilamentFormUeditorCommand;
-use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Wxj\FilamentFormUeditor\Commands\FilamentFormUeditorCommand;
 
 class FilamentFormUeditorServiceProvider extends PackageServiceProvider
 {
@@ -26,24 +22,23 @@ class FilamentFormUeditorServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-form-ueditor')
             ->hasConfigFile()
-            ->hasViews()
-//            ->hasAssets()
-//            ->hasMigration('create_filament_form_ueditor_table')
-//            ->hasCommand(FilamentFormUeditorCommand::class)
-        ;
+            ->hasViews();
+        //            ->hasAssets()
+        //            ->hasMigration('create_filament_form_ueditor_table')
+        //            ->hasCommand(FilamentFormUeditorCommand::class)
     }
 
     public function packageBooted(): void
     {
         FilamentAsset::register([
-//            Css::make('filament-ckeditor-field', __DIR__ . '/../resources/dist/filament-ckeditor-field.css'),
+            //            Css::make('filament-ckeditor-field', __DIR__ . '/../resources/dist/filament-ckeditor-field.css'),
             Js::make(
                 'filament-ueditor',
                 __DIR__.'/../resources/filament-ueditor.js'
             ),
-            Js::make('filament-ueditor-all', __DIR__ . '/../resources/dist/ueditor.all.js'),
+            Js::make('filament-ueditor-all', __DIR__.'/../resources/dist/ueditor.all.js'),
 
-            Js::make('filament-ueditor-config', __DIR__ . '/../resources/dist/ueditor.config.js'),
+            Js::make('filament-ueditor-config', __DIR__.'/../resources/dist/ueditor.config.js'),
 
         ], 'wuxuejian/filament-form-ueditor');
 
@@ -70,8 +65,7 @@ class FilamentFormUeditorServiceProvider extends PackageServiceProvider
         parent::boot();
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../resources/dist' =>
-                    public_path('js/wuxuejian/filament-form-ueditor'),
+                __DIR__.'/../resources/dist' => public_path('js/wuxuejian/filament-form-ueditor'),
             ], 'filament-ueditor-assets');
         }
     }

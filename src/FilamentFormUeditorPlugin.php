@@ -1,11 +1,11 @@
 <?php
 
 namespace Wxj\FilamentFormUeditor;
+
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Illuminate\Support\Facades\Route;
 use Wxj\FilamentFormUeditor\Http\Controller\UeditorPlusController;
-
 
 class FilamentFormUeditorPlugin implements Plugin
 {
@@ -16,7 +16,7 @@ class FilamentFormUeditorPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
-        $panel->authenticatedRoutes(function() {
+        $panel->authenticatedRoutes(function () {
             Route::get('ueditor', [UeditorPlusController::class, 'handle']);
             Route::post('ueditor', [UeditorPlusController::class, 'handle']);
         });

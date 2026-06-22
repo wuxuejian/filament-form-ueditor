@@ -2,8 +2,6 @@
 
 namespace Wxj\FilamentFormUeditor;
 
-
-
 use Closure;
 use Filament\Forms\Components\Field;
 use Wxj\FilamentFormUeditor\Enum\EditorMode;
@@ -36,6 +34,7 @@ class Ueditor extends Field
         ]);
         $field->initConfig();
         $field->normalMode();
+
         return $field;
     }
 
@@ -43,7 +42,7 @@ class Ueditor extends Field
     {
         parent::setUp();
 
-//        $this->dehydrated(false);
+        //        $this->dehydrated(false);
     }
 
     public function uploadUrl(string|Closure|null $uploadUrl): self
@@ -104,51 +103,57 @@ class Ueditor extends Field
     {
 
         return $this->config->toArray();
-//        return [
-////                 'serverUrl' => config.uploadUrl,
-////                 autoHeightEnabled: config.autoHeightEnabled,
-////                 initialFrameHeight: config.initialFrameHeight,
-//        ];
+        //        return [
+        // //                 'serverUrl' => config.uploadUrl,
+        // //                 autoHeightEnabled: config.autoHeightEnabled,
+        // //                 initialFrameHeight: config.initialFrameHeight,
+        //        ];
     }
 
-    public function initialFrameWidth($width):static
+    public function initialFrameWidth($width): static
     {
         $this->config->initialFrameWidth($width);
+
         return $this;
     }
 
-    public function initialFrameHeight($height):static
+    public function initialFrameHeight($height): static
     {
         $this->config->initialFrameHeight($height);
+
         return $this;
     }
 
     public function serverUrl($url)
     {
         $this->config->serverUrl($url);
+
         return $this;
     }
 
     public function disableShortcut()
     {
-        $this->config->set('shortcutMenu',[]);
+        $this->config->set('shortcutMenu', []);
+
         return $this;
     }
 
     public function enableShortcutMenu()
     {
-        $this->config->set('shortcutMenu',$this->config->defaultShortcutMenu);
+        $this->config->set('shortcutMenu', $this->config->defaultShortcutMenu);
     }
 
-    public function disableShortcutAI():static
+    public function disableShortcutAI(): static
     {
-        $this->config->set('shortcutMenuShows.ai',false);
+        $this->config->set('shortcutMenuShows.ai', false);
+
         return $this;
     }
 
-    public function enableShortcutAI():static
+    public function enableShortcutAI(): static
     {
-        $this->config->set('shortcutMenuShows.ai',true);
+        $this->config->set('shortcutMenuShows.ai', true);
+
         return $this;
     }
 
@@ -160,7 +165,8 @@ class Ueditor extends Field
     public function mode(EditorMode $mode)
     {
         $this->mode = $mode;
-        $this->config->set('toolbars',$mode->getToolbars());
+        $this->config->set('toolbars', $mode->getToolbars());
+
         return $this;
     }
 
@@ -168,6 +174,7 @@ class Ueditor extends Field
     {
         return $this->mode(EditorMode::Simple);
     }
+
     public function normalMode()
     {
         return $this->mode(EditorMode::Normal);
@@ -180,7 +187,8 @@ class Ueditor extends Field
 
     public function disableAI()
     {
-        $this->config->set('toolbarShows.ai',false);
+        $this->config->set('toolbarShows.ai', false);
+
         return $this;
     }
 
@@ -195,14 +203,14 @@ class Ueditor extends Field
             return $macro(...$parameters);
         }
 
-        //自动代理 config 方法（关键）
+        // 自动代理 config 方法（关键）
         if (method_exists($this->config, $method)) {
             $this->config->{$method}(...$parameters);
 
             return $this;
         }
 
-        //fallback parent
+        // fallback parent
         return parent::__call($method, $parameters);
     }
 }
