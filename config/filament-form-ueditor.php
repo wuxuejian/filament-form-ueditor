@@ -35,7 +35,7 @@ return [
         'imageCompressBorder' => 1600,
         'imageInsertAlign' => 'none',
         'imageUrlPrefix' => '',
-        'imagePathFormat' => '/uploads/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}',
+        'imagePathFormat' => '/uploads/ueditor/image/{yyyy}{mm}{dd}/{hh}',//{time}{rand:6}
 
         // 涂鸦上传配置
         'scrawlActionName' => 'uploadscrawl',
@@ -65,7 +65,7 @@ return [
         'videoUrlPrefix' => '',
         'videoMaxSize' => 100 * 1024 * 1024,
         'videoAllowFiles' => ['.mp4', '.avi', '.rm', '.rmvb', '.wmv'],
-        'videoPathFormat' => '/uploads/ueditor/video/{yyyy}{mm}{dd}/{time}{rand:6}',
+        'videoPathFormat' => '/uploads/ueditor/video/{yyyy}{mm}{dd}/{hh}',//{time}{rand:6}
 
         // 文件上传配置
         'fileActionName' => 'uploadfile',
@@ -73,7 +73,7 @@ return [
         'fileUrlPrefix' => '',
         'fileMaxSize' => 50 * 1024 * 1024,
         'fileAllowFiles' => ['.zip', '.rar', '.7z', '.doc', '.docx', '.xls', '.xlsx', '.pdf'],
-        'filePathFormat' => '/uploads/ueditor/file/{yyyy}{mm}{dd}/{time}{rand:6}',
+        'filePathFormat' => '/uploads/ueditor/file/{yyyy}{mm}{dd}/{hh}',//{time}{rand:6}
 
         // 图片列表配置
         'imageManagerActionName' => 'listimage',

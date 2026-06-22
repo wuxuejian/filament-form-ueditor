@@ -2,8 +2,12 @@
 
 namespace Wxj\FilamentFormUeditor\Http\Controller;
 
+use Awcodes\Curator\Facades\Glide;
+use Awcodes\Curator\Models\Media;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Awcodes\Curator\Resources\Media\MediaResource;
 
 class UeditorPlusController
 {
@@ -68,31 +72,82 @@ class UeditorPlusController
      */
     protected function uploadFile(Request $request, string $type): array
     {
-        $fieldName = 'upfile';
-        $file = $request->file($fieldName);
+        $file = $request->file('upfile');
 
         if (! $file || ! $file->isValid()) {
             return ['state' => 'File not found'];
         }
 
-        switch ($type) {
-            case 'image':
-                $dir = 'uploads/ueditor/image';
-                break;
-            case 'video':
-                $dir = 'uploads/ueditor/video';
-                break;
-            default:
-                $dir = 'uploads/ueditor/file';
+        // -----------------------------
+        // 1. 类型映射
+        // -----------------------------
+        $dirTemplate = match ($type) {
+            'image' => $this->config['imagePathFormat'],//'uploads/ueditor/image',///uploads/ueditor/image/{yyyy}{mm}{dd}/{time}{rand:6}'
+            'video' => $this->config['videoPathFormat'],
+            default => $this->config['filePathFormat'],
+        };
+        $dir = $this->generateDir($dirTemplate);
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        $originalName = $file->getClientOriginalName();
+
+        // -----------------------------
+        // 2. 文件名防冲突
+        // -----------------------------
+        $fileName = Str::uuid()->toString() . '.' . $extension;
+
+//        $path = $file->storeAs($dir, $fileName, [
+//            'disk' => config('filesystems.default')
+//        ]);
+
+        $path = $file->store($dir);
+
+        $diskName = config('filesystems.default');
+        $disk = Storage::disk($diskName);
+
+        $url = $disk->url($path);
+
+        // -----------------------------
+        // 3. 可选：Curator 集成
+        // -----------------------------
+        if (
+            $this->useMedia()
+        ) {
+            $data = [
+                'disk' => $diskName,
+                'directory' => $dir,
+                'visibility' => 'public',
+                'name' => $fileName,
+                'title' => $originalName,
+                'path' => $path,
+                'size' => $file->getSize(),
+                'type' => $file->getMimeType(),
+                'ext' => $extension,
+            ];
+            if($type == 'image') {
+                $manager = Glide::getServer()->getApi()->getImageManager();
+                $content = $file->getRealPath();
+                $image = $manager->read($content);
+                $width = $image->width();
+                $height = $image->height();
+                $exif = $image->exif()->toArray();
+                $data['width'] = $width;
+                $data['height'] = $height;
+                $data['exif'] = $exif;
+            }
+            \Awcodes\Curator\Models\Media::create($data);
         }
 
-        $path = $file->store($dir );
-
+        // -----------------------------
+        // 4. 返回 UEditor 标准格式
+        // -----------------------------
         return [
             'state'    => 'SUCCESS',
-            'url'      => Storage::url($path),
-            'title'    => basename($path),
-            'original' => $file->getClientOriginalName(),
+            'url'      => $url,
+            'title'    => $fileName,
+            'original' => $originalName,
+            'type'     => $file->getMimeType(),
+            'size'     => $file->getSize(),
         ];
     }
 
@@ -132,27 +187,42 @@ class UeditorPlusController
         $start = (int) $request->input('start', 0);
         $size  = (int) $request->input('size', 20);
 
-        $dir = $type === 'image'
-            ? 'uploads/ueditor/image'
-            : 'uploads/ueditor/file';
-
-        $allFiles = Storage::disk()->files($dir);
-
-        $files = array_slice($allFiles, $start, $size);
-
-        $list = [];
-        foreach ($files as $file) {
-            $list[] = [
-                'url'   => Storage::url($file),
-                'mtime' => @filemtime(storage_path('app/public/' . $file)) ?: time(),
+        if(!$this->useMedia()) {
+            return [
+                'state' => 'SUCCESS',
+                'list'  => [],
+                'start' => $start,
+                'total' => 0,
             ];
         }
-
+        $modelClass = MediaResource::getModel();
+        $medias = $modelClass::query()->orderBy('id','desc')->paginate(perPage:$size,page:1);//($start, $size);
+//        $dir = $type === 'image'
+//            ? 'uploads/ueditor/image'
+//            : 'uploads/ueditor/file';
+//
+//        $allFiles = Storage::disk()->files($dir);
+//
+//        $files = array_slice($allFiles, $start, $size);
+//
+//        $list = [];
+//        foreach ($files as $file) {
+//            $list[] = [
+//                'url'   => Storage::url($file),
+//                'mtime' => @filemtime(storage_path('app/public/' . $file)) ?: time(),
+//            ];
+//        }
+        $list = $medias->each(function ($media) use ($type) {
+           return  [
+                'url'   => $media->url,
+                'mtime' => $media->updated_at,
+            ];
+        });
         return [
             'state' => 'SUCCESS',
             'list'  => $list,
             'start' => $start,
-            'total' => count($allFiles),
+            'total' => $medias->total(),
         ];
     }
 
@@ -213,5 +283,61 @@ class UeditorPlusController
         }
 
         return response()->json($data);
+    }
+
+    protected function generateDir(string $template): string
+    {
+        $now = now();
+
+        $replacements = [
+            '{yyyy}' => $now->format('Y'),
+            '{yy}'   => $now->format('y'),
+            '{mm}'   => $now->format('m'),
+            '{dd}'   => $now->format('d'),
+            '{hh}'   => $now->format('H'),
+            '{ii}'   => $now->format('i'),
+            '{ss}'   => $now->format('s'),
+            '{time}' => (string) time(),
+        ];
+
+        // 1. 替换时间变量
+        $dir = str_replace(
+            array_keys($replacements),
+            array_values($replacements),
+            $template
+        );
+
+        // 2. rand:N
+        $dir = preg_replace_callback('/\{rand:(\d+)\}/', function ($matches) {
+            return $this->randomNumber((int) $matches[1]);
+        }, $dir);
+
+        // 3. 规范化斜杠（关键）
+        $dir = str_replace('\\', '/', $dir);
+
+        // 4. 只清理重复斜杠（不要 trim）
+        $dir = preg_replace('#/+#', '/', $dir);
+
+        // 5. 防止开头多余 /
+        return ltrim($dir, '/');
+    }
+
+    protected function randomNumber(int $length): string
+    {
+        $min = 10 ** ($length - 1);
+        $max = (10 ** $length) - 1;
+
+        return (string) random_int($min, $max);
+    }
+
+    private function useMedia()
+    {
+        if(!config('filament-form-ueditor.use_media_library')) {
+            return false;
+        }
+        if(class_exists(\Awcodes\Curator\CuratorPlugin::class)) {
+            return true;
+        }
+        throw new \Exception('CuratorPlugin is not installed.');
     }
 }
