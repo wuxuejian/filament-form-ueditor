@@ -5,11 +5,16 @@
 [![GitHub Code Style Action Status](https://github.com/spatie/package-filament-form-ueditor-laravel/actions/workflows/fix-php-code-style-issues.yml/badge.svg)](https://github.com/wuxuejian/filament-form-ueditor/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/wuxuejian/filament-form-ueditor.svg?style=flat-square)](https://packagist.org/packages/wuxuejian/filament-form-ueditor)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Features
+    Ueditor Plus integration for FilamentPHP 5 forms
+    Image upload support with configurable upload URLs
+    Full control over image upload handling - you implement your own upload endpoint
+    Highly customizable with fluent API
+    Easy to configure and use
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/filament-form-ueditor.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/filament-form-ueditor)
+
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
@@ -52,14 +57,18 @@ php artisan vendor:publish --tag="filament-form-ueditor-views"
 ## Usage
 
 ```php
-$filamentFormUeditor = new Wxj\FilamentFormUeditor();
-echo $filamentFormUeditor->echoPhrase('Hello, Wxj!');
+Ueditor::make('xxx')
+    ->initialFrameWidth(400)//宽度
+    ->simpleMode()// 简洁模式
+    ->normalMode() //正常模式
+    ->proMode() //专业模式
+    ->disableAI(); //禁用AI
 ```
 
 ## Testing
 
 ```bash
-composer test
+
 ```
 
 ## Changelog
